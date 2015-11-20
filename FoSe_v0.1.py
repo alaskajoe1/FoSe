@@ -80,7 +80,7 @@ xdata, ydata = [], []
 startTime = time.time()
 
 time_template = 'time = %.1fs'
-time_text = plt.text(2, 120, "0")
+time_text = plt.text(2, 120, "0",)
 
 
 # update the data
@@ -102,6 +102,9 @@ def run(data):
     # ydata[(len(ydata)-10):] -- takes the last ten values of ydata (similar to MATLAB colon notation)
     # So really avergaing the last 10 values (0.24s) worth of data
 
+    time_text.set_text("%.1f" % np.mean(ydata[(len(ydata) - 10):]))
+
+    a, b = time_text.get_position()
 
 
     # calculates current bounds on the x-axis
@@ -110,10 +113,11 @@ def run(data):
     # if the data is within 2 second of the end of the graph
     if t >= xmax - 2:
         ax.set_xlim(xmin + 0.05, xmax + 0.05)  # increment the x-axis
+        time_text.set_position((a+0.05,b))
         ax.figure.canvas.draw()  # redraw the graph
     line.set_data(xdata, ydata)  # update x and y values
 
-    return line, time_text
+    return line
 
 
 # animates the graph
