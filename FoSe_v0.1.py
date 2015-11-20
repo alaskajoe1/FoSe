@@ -2,6 +2,7 @@
 import sys
 import time
 import math
+from tkinter import *
 # Phidget specific imports
 from Phidgets.PhidgetException import PhidgetException
 from Phidgets.Devices.Bridge import Bridge, BridgeGain
@@ -61,12 +62,14 @@ displayDeviceInfo()
 
 # defines initial parameters
 def init():
-    ax.set_ylim(-30, 70)
+    ax.set_ylim(0, 125)
     ax.set_xlim(0, 10)
     del xdata[:]
     del ydata[:]
     line.set_data(xdata, ydata)
-    return line,
+
+    time_text.set_text('')
+    return line, time_text
 
 
 # sets up plot
@@ -76,12 +79,14 @@ ax.grid()
 xdata, ydata = [], []
 startTime = time.time()
 
+time_template = 'time = %.1fs'
+time_text = plt.text(2, 120, "0")
+
 
 # update the data
 def run(data):
     # calculates seconds since program started running
     t = time.time() - startTime
-
     # converts bridge voltage output to lbs
     y = (bridge.getBridgeValue(1) + 0.007) * 74.3  # lbs/mV
 
@@ -97,16 +102,18 @@ def run(data):
     # ydata[(len(ydata)-10):] -- takes the last ten values of ydata (similar to MATLAB colon notation)
     # So really avergaing the last 10 values (0.24s) worth of data
 
+
+
     # calculates current bounds on the x-axis
     xmin, xmax = ax.get_xlim()
 
     # if the data is within 2 second of the end of the graph
     if t >= xmax - 2:
-        ax.set_xlim(xmin + 0.03, xmax + 0.03)  # increment the x-axis
+        ax.set_xlim(xmin + 0.05, xmax + 0.05)  # increment the x-axis
         ax.figure.canvas.draw()  # redraw the graph
     line.set_data(xdata, ydata)  # update x and y values
 
-    return line,
+    return line, time_text
 
 
 # animates the graph
