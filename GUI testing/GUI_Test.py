@@ -4,7 +4,7 @@ from tkinter import *
 root = Tk()
 
 #adds a label to the frame with the text "Blewdy Jeenaa"
-theLabel = Label(root, text="Blewdy Jeenaa")
+theLabel = Label(root, text="FoSe Jeenaa");
 
 #Adds the window to the most convenient portion of the screen
 theLabel.pack()

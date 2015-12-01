@@ -12,6 +12,11 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
 
+# ToDO
+# GUI
+# Calibrate?
+# Bar graph or pie chart?
+
 # Information Display Function
 def displayDeviceInfo():
     print("|------------|----------------------------------|--------------|------------|")
@@ -46,6 +51,20 @@ def displayDeviceInfo():
     time.sleep(.2)
 
 
+class TheButtons:
+
+    def __init__(self, master):
+        frame = Frame(master)
+        frame.pack()
+
+        self.quitButton = Button(frame, text="Start", font=("Comic Sans", 500), command=root.destroy)
+        self.quitButton.pack(side=LEFT)
+
+root = Tk()
+b = TheButtons(root)
+root.mainloop()
+
+
 print("Opening phidget object....")
 
 # Creates bridge object
@@ -62,14 +81,14 @@ displayDeviceInfo()
 
 # defines initial parameters
 def init():
-    ax.set_ylim(0, 125)
+    ax.set_ylim(0, 150)
     ax.set_xlim(0, 10)
     del xdata[:]
     del ydata[:]
     line.set_data(xdata, ydata)
 
-    time_text.set_text('')
-    return line, time_text
+    force_text.set_text('')
+    return line, force_text
 
 
 # sets up plot
@@ -80,7 +99,8 @@ xdata, ydata = [], []
 startTime = time.time()
 
 time_template = 'time = %.1fs'
-time_text = plt.text(2, 120, "0",)
+force_text = plt.text(0.5, 125, "0")
+max_text = plt.text(0.5, 110, "0")
 
 
 # update the data
@@ -94,6 +114,12 @@ def run(data):
     xdata.append(t)
     ydata.append(y)
 
+    if len(ydata) > 30:
+        ydata[len(ydata)-1] = (np.mean(ydata[(len(ydata) - 5):]))
+
+
+
+
     # updates plot title with current force* in lbs
     plt.title("%.1f" % np.mean(ydata[(len(ydata) - 10):]))
     # "%.1f" %" -- formats following number as a float with 1 value after the decimal
@@ -102,18 +128,24 @@ def run(data):
     # ydata[(len(ydata)-10):] -- takes the last ten values of ydata (similar to MATLAB colon notation)
     # So really avergaing the last 10 values (0.24s) worth of data
 
-    time_text.set_text("%.1f" % np.mean(ydata[(len(ydata) - 10):]))
+    force_text.set_text("Current Force: %.1f" % np.mean(ydata[(len(ydata) - 10):]) + " lbs")
+    force_text.set_size(30)
 
-    a, b = time_text.get_position()
+    max_text.set_text("Max Force: %.1f" % np.max(ydata) + " lbs")
+    max_text.set_size(30)
 
+
+    a, b = force_text.get_position()
+    c, d = max_text.get_position()
 
     # calculates current bounds on the x-axis
     xmin, xmax = ax.get_xlim()
 
     # if the data is within 2 second of the end of the graph
     if t >= xmax - 2:
-        ax.set_xlim(xmin + 0.05, xmax + 0.05)  # increment the x-axis
-        time_text.set_position((a+0.05,b))
+        ax.set_xlim(xmin + 0.08, xmax + 0.08)  # increment the x-axis
+        force_text.set_position((a + 0.08, b))
+        max_text.set_position((c + 0.08, d))
         ax.figure.canvas.draw()  # redraw the graph
     line.set_data(xdata, ydata)  # update x and y values
 
