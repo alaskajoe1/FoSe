@@ -1,6 +1,6 @@
 from tkinter import *
 
-
+#defines a class
 class TheButtons:
 
     def __init__(self, master):
@@ -13,9 +13,11 @@ class TheButtons:
         self.quitButton = Button(frame, text="Quit", command=frame.quit)
         self.quitButton.pack(side=LEFT)
 
+
     def printMessage(self):
         print("Wow, this actually worked!")
 
 root = Tk()
+# creates b, an instance of the class TheButtons
 b = TheButtons(root)
 root.mainloop()

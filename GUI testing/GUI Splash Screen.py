@@ -16,7 +16,7 @@ www.sunjay-varma.com
 from tkinter import *
 
 class SplashScreen(Frame):
-    def __init__(self, master=None, width=0.8, height=0.6, useFactor=True):
+    def __init__(self, master=None, width=1, height=0.8, useFactor=True):
         Frame.__init__(self, master)
         self.pack(side=TOP, fill=BOTH, expand=YES)
 
