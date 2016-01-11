@@ -65,7 +65,7 @@ class ForceGraph:
             return line, force_text
 
         # update the data
-        def run(data):
+        def run(maxForce):
             # calculates seconds since program started running
             t = time.time() - startTime
             # converts bridge voltage output to lbs
@@ -86,8 +86,13 @@ class ForceGraph:
             # ydata[(len(ydata)-10):] -- takes the last ten values of ydata (similar to MATLAB colon notation)
             # So really avergaing the last 10 values (0.24s) worth of data
 
-            force_text.set_text("Current Force: %.1f" % np.mean(ydata[(len(ydata) - 10):]) + " lbs")
+
+            currentForce = np.mean(ydata[(len(ydata) - 10):])
+            force_text.set_text("Current Force: %.1f" % currentForce + " lbs")
             force_text.set_size(30)
+
+            if currentForce > maxForce:
+                maxForce = currentForce
 
             max_text.set_text("Max Force: %.1f" % np.max(ydata) + " lbs")
             max_text.set_size(30)
@@ -100,9 +105,9 @@ class ForceGraph:
 
             # if the data is within 2 second of the end of the graph
             if t >= xmax - 2:
-                ax.set_xlim(xmin + 0.08, xmax + 0.08)  # increment the x-axis
-                force_text.set_position((a + 0.08, b))
-                max_text.set_position((c + 0.08, d))
+                ax.set_xlim(t-8, t+2)  # increment the x-axis
+                force_text.set_position((t-7.5, b))
+                max_text.set_position((t-7.5, d))
                 ax.figure.canvas.draw()  # redraw the graph
             line.set_data(xdata, ydata)  # update x and y values
 
@@ -152,6 +157,7 @@ def calibrate():
 def helpme():
     print("Help!")
     help_root = Toplevel()
+    help_root.wm_title("Help!")
 
     help_image = PhotoImage(file="file.png")
     helplabel = Label(help_root, image=help_image)
@@ -165,8 +171,11 @@ def helpme():
 
 root = Tk()
 
+root.wm_title("FoSe Jeenaa")
+
+
 # loads intro image
-introImage = PhotoImage(file="FoSeJeenaa_small.png")
+introImage = PhotoImage(file="FoSeJeenaa_med.png")
 introLabel = Label(root, image=introImage)
 introLabel.pack()
 
@@ -178,14 +187,15 @@ nextButton.pack()
 root.mainloop()
 
 root2 = Tk()
+root2.wm_title("FoSe Jeenaa")
 
-runButton = Button(root2, text="Start Test", command=starttest)
+runButton = Button(root2, text="Start Test", font=("Times New Roman", 36), bg="blue", fg="yellow", command=starttest)
 runButton.pack()
 
-calibButton = Button(root2, text="Calibrate", command=calibrate)
+calibButton = Button(root2, text="Calibrate", font=("Times New Roman", 36), bg="blue", fg="yellow", command=calibrate)
 calibButton.pack()
 
-helpButton = Button(root2, text="Help!", command=helpme)
+helpButton = Button(root2, text="Help!", font=("Times New Roman", 36), bg="blue", fg="yellow", command=helpme)
 helpButton.pack()
 
 
